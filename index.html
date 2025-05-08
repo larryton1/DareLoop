@@ -3,275 +3,301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fitness-App</title>
+  <title>Fitness App</title>
   <style>
-    /* Basis-Styles */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f7f6;
+      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
     }
-
     header {
-      background-color: #2f80ed;
-      padding: 20px;
+      background-color: #333;
       color: white;
       text-align: center;
+      padding: 1rem;
     }
-
-    h1 {
-      margin: 0;
-      font-size: 2.5em;
+    main {
+      margin: 2rem;
     }
-
-    .main-container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+    .auth-container, .main-container, .profile-container {
+      display: none;
     }
-
-    .workout-card {
-      background-color: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .workout-card h3 {
-      margin: 0;
-      font-size: 1.6em;
-      color: #333;
-    }
-
-    .workout-card button {
-      padding: 12px 20px;
-      background-color: #10b981;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .workout-card button:hover {
-      background-color: #059669;
-    }
-
-    .progress-bar-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 30px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 20px;
-      background-color: #e1e7f0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress-bar span {
+    .auth-container.active, .main-container.active, .profile-container.active {
       display: block;
-      height: 100%;
-      background-color: #2f80ed;
-      width: 0;
-      transition: width 1s;
     }
-
-    .footer {
-      background-color: #2f80ed;
-      padding: 10px;
-      text-align: center;
-      color: white;
-      margin-top: 50px;
-    }
-
-    #auth-container {
-      text-align: center;
-      margin: 20px;
-    }
-
-    #auth-container input {
+    .auth-container input, .auth-container button, .profile-container input, .profile-container button {
       padding: 10px;
       margin: 5px;
-      width: 80%;
+      width: 100%;
       max-width: 300px;
+      margin-bottom: 1rem;
     }
-
-    #auth-container button {
-      padding: 10px 20px;
-      margin: 5px;
-      background-color: #10b981;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+    .workout-list {
+      list-style: none;
+      padding: 0;
+    }
+    .workout-item {
+      background-color: #fff;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .timer {
+      font-size: 2rem;
+      margin-top: 1rem;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
     }
   </style>
 </head>
+
 <body>
+  <header>
+    <h1>Fitness App</h1>
+  </header>
 
-<header>
-  <h1>Fitness-App</h1>
-  <p>Dein persönlicher Fitness-Coach</p>
-</header>
+  <!-- Authentication -->
+  <div class="auth-container" id="auth-container">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="E-Mail" required>
+    <input type="password" id="password" placeholder="Passwort" required>
+    <button id="sign-in-btn">Anmelden</button>
+    <p>Noch kein Konto? <a href="#" id="sign-up-link">Registrieren</a></p>
+    <p class="error-message" id="auth-error"></p>
+  </div>
 
-<!-- Benutzeranmeldung -->
-<div id="auth-container">
-  <h2>Benutzer anmelden oder registrieren</h2>
-  <button id="sign-in-btn">Anmelden</button>
-  <button id="sign-up-btn">Registrieren</button>
-  <input type="email" id="email" placeholder="E-Mail">
-  <input type="password" id="password" placeholder="Passwort">
-</div>
+  <!-- Sign-Up -->
+  <div class="auth-container" id="sign-up-container">
+    <h2>Registrieren</h2>
+    <input type="email" id="sign-up-email" placeholder="E-Mail" required>
+    <input type="password" id="sign-up-password" placeholder="Passwort" required>
+    <button id="sign-up-btn">Registrieren</button>
+    <p>Schon ein Konto? <a href="#" id="login-link">Anmelden</a></p>
+    <p class="error-message" id="sign-up-error"></p>
+  </div>
 
-<div class="main-container" style="display:none;">
-  <!-- Workout Cards -->
-  <div class="workout-card" id="workout-card-1" style="display:none;">
+  <!-- Profile -->
+  <div class="profile-container" id="profile-container">
+    <h2>Willkommen, <span id="user-name"></span>!</h2>
     <div>
-      <h3>Yoga - Anfänger</h3>
-      <p>40 Minuten - 300 kcal</p>
+      <h3>Fitnessziel</h3>
+      <input type="number" id="fitness-goal" placeholder="Ziel in Kilos" />
+      <button id="save-goal-btn">Ziel speichern</button>
     </div>
-    <button onclick="startWorkout(1)">Starten</button>
+    <button id="sign-out-btn">Abmelden</button>
   </div>
 
-  <div class="workout-card" id="workout-card-2" style="display:none;">
-    <div>
-      <h3>Krafttraining - Brust</h3>
-      <p>30 Minuten - 350 kcal</p>
+  <!-- Main Content -->
+  <div class="main-container" id="main-container">
+    <h2>Dein Trainingsbereich</h2>
+
+    <div class="add-workout-form">
+      <input type="text" id="workout-name" placeholder="Workout Name">
+      <button id="add-workout-btn">Workout hinzufügen</button>
     </div>
-    <button onclick="startWorkout(2)">Starten</button>
+
+    <ul class="workout-list" id="workout-list"></ul>
+
+    <!-- Workout Timer -->
+    <div id="timer-container" style="display:none;">
+      <div class="timer" id="timer">00:00</div>
+      <button id="start-timer-btn">Start Timer</button>
+      <button id="stop-timer-btn" style="display:none;">Stop Timer</button>
+    </div>
+    
+    <button id="sign-out-btn">Abmelden</button>
   </div>
 
-  <div class="workout-card" id="workout-card-3" style="display:none;">
-    <div>
-      <h3>Laufen - 5 km</h3>
-      <p>40 Minuten - 400 kcal</p>
-    </div>
-    <button onclick="startWorkout(3)">Starten</button>
-  </div>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
 
-  <!-- Fortschrittsanzeige -->
-  <div class="progress-bar-container">
-    <h2>Fortschritt</h2>
-    <div class="progress-bar">
-      <span id="progress-bar"></span>
-    </div>
-    <p id="workout-status">Bereit für dein Workout!</p>
-  </div>
-</div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_AUTH_DOMAIN",
+      projectId: "DEIN_PROJECT_ID",
+      storageBucket: "DEIN_STORAGE_BUCKET",
+      messagingSenderId: "DEIN_MESSAGING_SENDER_ID",
+      appId: "DEIN_APP_ID",
+      measurementId: "DEIN_MEASUREMENT_ID"
+    };
 
-<!-- Footer -->
-<div class="footer">
-  <p>&copy; 2025 Fitness-App | Alle Rechte vorbehalten</p>
-</div>
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const firestore = firebase.firestore();
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+    let user = null;
 
-<script>
-// Firebase-Konfiguration (Daten hier ersetzen)
-const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-auth-domain",
-  projectId: "your-project-id",
-  storageBucket: "your-storage-bucket",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id",
-  measurementId: "your-measurement-id"
-};
+    const signInBtn = document.getElementById("sign-in-btn");
+    const signUpBtn = document.getElementById("sign-up-btn");
+    const signOutBtn = document.getElementById("sign-out-btn");
+    const addWorkoutBtn = document.getElementById("add-workout-btn");
+    const saveGoalBtn = document.getElementById("save-goal-btn");
+    const workoutList = document.getElementById("workout-list");
+    const timerDisplay = document.getElementById("timer");
+    const startTimerBtn = document.getElementById("start-timer-btn");
+    const stopTimerBtn = document.getElementById("stop-timer-btn");
+    
+    const workoutNameInput = document.getElementById("workout-name");
+    const fitnessGoalInput = document.getElementById("fitness-goal");
+    const timerContainer = document.getElementById("timer-container");
 
-// Firebase initialisieren
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
+    // Authentication Handlers
+    signInBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-// Anmeldung und Registrierung
-document.getElementById("sign-in-btn").addEventListener("click", signIn);
-document.getElementById("sign-up-btn").addEventListener("click", signUp);
+      if (!email || !password) {
+        displayError("auth-error", "Bitte fülle alle Felder aus.");
+        return;
+      }
 
-async function signIn() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        user = userCredential.user;
+        showMainPage();
+      } catch (error) {
+        displayError("auth-error", "Fehler beim Anmelden: " + error.message);
+      }
+    });
 
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-    alert("Erfolgreich angemeldet!");
-    document.getElementById("auth-container").style.display = "none";
-    document.querySelector(".main-container").style.display = "block";
-    loadWorkouts();
-  } catch (error) {
-    alert("Fehler beim Anmelden: " + error.message);
-  }
-}
+    signUpBtn.addEventListener("click", async () => {
+      const email = document.getElementById("sign-up-email").value;
+      const password = document.getElementById("sign-up-password").value;
 
-async function signUp() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+      if (!email || !password) {
+        displayError("sign-up-error", "Bitte fülle alle Felder aus.");
+        return;
+      }
 
-  try {
-    await auth.createUserWithEmailAndPassword(email, password);
-    alert("Erfolgreich registriert!");
-    document.getElementById("auth-container").style.display = "none";
-    document.querySelector(".main-container").style.display = "block";
-    loadWorkouts();
-  } catch (error) {
-    alert("Fehler bei der Registrierung: " + error.message);
-  }
-}
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        user = userCredential.user;
+        showMainPage();
+      } catch (error) {
+        displayError("sign-up-error", "Fehler bei der Registrierung: " + error.message);
+      }
+    });
 
-// Workouts laden (nach Anmeldung)
-function loadWorkouts() {
-  document.getElementById("workout-card-1").style.display = "block";
-  document.getElementById("workout-card-2").style.display = "block";
-  document.getElementById("workout-card-3").style.display = "block";
-}
+    signOutBtn.addEventListener("click", () => {
+      auth.signOut().then(() => {
+        user = null;
+        showAuthPage();
+      });
+    });
 
-// Workout starten
-function startWorkout(workoutId) {
-  let workoutName;
-  let workoutDuration;
+    saveGoalBtn.addEventListener("click", () => {
+      const goal = fitnessGoalInput.value;
+      if (!goal) {
+        alert("Bitte gib ein Ziel an!");
+        return;
+      }
 
-  switch(workoutId) {
-    case 1:
-      workoutName = "Yoga - Anfänger";
-      workoutDuration = 40;
-      break;
-    case 2:
-      workoutName = "Krafttraining - Brust";
-      workoutDuration = 30;
-      break;
-    case 3:
-      workoutName = "Laufen - 5 km";
-      workoutDuration = 40;
-      break;
-  }
+      firestore.collection("users").doc(user.uid).set({
+        fitnessGoal: goal
+      })
+      .then(() => {
+        alert("Ziel gespeichert!");
+      })
+      .catch((error) => {
+        alert("Fehler beim Speichern des Ziels: " + error.message);
+      });
+    });
 
-  document.getElementById('workout-status').innerText = `Du hast das ${workoutName} Workout gestartet!`;
-  simulateProgress(workoutDuration);
-}
+    addWorkoutBtn.addEventListener("click", () => {
+      const workoutName = workoutNameInput.value.trim();
+      if (workoutName) {
+        addWorkout(workoutName);
+        workoutNameInput.value = "";
+      }
+    });
 
-function simulateProgress(duration) {
-  const progressBar = document.getElementById('progress-bar');
-  let width = 0;
-  const interval = setInterval(() => {
-    if (width >= 100) {
-      clearInterval(interval);
-      document.getElementById('workout-status').innerText = "Workout abgeschlossen!";
-    } else {
-      width += 100 / duration;
-      progressBar.style.width = `${width}%`;
+    // Timer Handling
+    let timerInterval;
+    let time = 0;
+
+    startTimerBtn.addEventListener("click", () => {
+      timerInterval = setInterval(() => {
+        time++;
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerDisplay.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+      }, 1000);
+      startTimerBtn.style.display = "none";
+      stopTimerBtn.style.display = "inline";
+    });
+
+    stopTimerBtn.addEventListener("click", () => {
+      clearInterval(timerInterval);
+      startTimerBtn.style.display = "inline";
+      stopTimerBtn.style.display = "none";
+    });
+
+    function displayError(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.textContent = message;
     }
-  }, 1000);
-}
-</script>
+
+    function showMainPage() {
+      document.getElementById("auth-container").classList.remove("active");
+      document.getElementById("sign-up-container").classList.remove("active");
+      document.getElementById("main-container").classList.add("active");
+      document.getElementById("profile-container").classList.remove("active");
+      loadWorkouts();
+    }
+
+    function showAuthPage() {
+      document.getElementById("auth-container").classList.add("active");
+      document.getElementById("sign-up-container").classList.remove("active");
+      document.getElementById("main-container").classList.remove("active");
+      document.getElementById("profile-container").classList.remove("active");
+    }
+
+    function loadWorkouts() {
+      firestore.collection("workouts").where("userId", "==", user.uid)
+        .get()
+        .then((querySnapshot) => {
+          workoutList.innerHTML = "";
+          querySnapshot.forEach((doc) => {
+            const workout = doc.data();
+            const li = document.createElement("li");
+            li.className = "workout-item";
+            li.textContent = workout.name;
+            workoutList.appendChild(li);
+          });
+        });
+    }
+
+    function addWorkout(workoutName) {
+      firestore.collection("workouts").add({
+        name: workoutName,
+        userId: user.uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        loadWorkouts();
+      })
+      .catch((error) => {
+        alert("Fehler beim Hinzufügen des Workouts: " + error.message);
+      });
+    }
+
+    auth.onAuthStateChanged((userCredential) => {
+      if (userCredential) {
+        user = userCredential;
+        showMainPage();
+      } else {
+        showAuthPage();
+      }
+    });
+
+    // Initiale Anzeige
+    showAuthPage();
+  </script>
 </body>
 </html>
