@@ -1,11 +1,65 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Meine erste Seite</title>
-</head>
-<body>
-  <h1>Hallo Welt!</h1>
-  <p>Diese Seite wurde direkt auf GitHub erstellt.</p>
-</body>
-</html>
+<script>
+  const groupList = document.getElementById('groupList');
+  let groups = JSON.parse(localStorage.getItem('dareloopGroups')) || [];
+
+  function saveGroups() {
+    localStorage.setItem('dareloopGroups', JSON.stringify(groups));
+  }
+
+  function renderGroups() {
+    groupList.innerHTML = '';
+    groups.forEach((group, groupIndex) => {
+      const li = document.createElement('li');
+      li.className = 'group';
+      li.innerHTML = `
+        <strong>Gruppe: ${group.name}</strong>
+        <div class="challenge-form">
+          <input type="text" placeholder="Challenge hinzufügen" />
+          <button onclick="addChallenge(${groupIndex}, this)">+</button>
+        </div>
+        <ul class="challenges"></ul>
+      `;
+
+      const challengeList = li.querySelector('.challenges');
+      group.challenges.forEach((challenge, challengeIndex) => {
+        const item = document.createElement('li');
+        item.innerHTML = `
+          ${challenge}
+          <button onclick="deleteChallenge(${groupIndex}, ${challengeIndex})" style="margin-left:10px; background:#ef4444; color:white; border:none; border-radius:4px; cursor:pointer;">X</button>
+        `;
+        challengeList.appendChild(item);
+      });
+
+      groupList.appendChild(li);
+    });
+  }
+
+  function createGroup() {
+    const input = document.getElementById('groupName');
+    const name = input.value.trim();
+    if (name === '') return;
+
+    groups.push({ name, challenges: [] });
+    saveGroups();
+    renderGroups();
+    input.value = '';
+  }
+
+  function addChallenge(groupIndex, button) {
+    const input = button.previousElementSibling;
+    const challenge = input.value.trim();
+    if (challenge === '') return;
+
+    groups[groupIndex].challenges.push(challenge);
+    saveGroups();
+    renderGroups();
+  }
+
+  function deleteChallenge(groupIndex, challengeIndex) {
+    groups[groupIndex].challenges.splice(challengeIndex, 1);
+    saveGroups();
+    renderGroups();
+  }
+
+  renderGroups();
+</script>
