@@ -261,13 +261,4 @@
       reader.onload = e => {
         try {
           const data = JSON.parse(e.target.result);
-          if (Array.isArray(data)) {
-            groups = data;
-            saveGroups();
-            renderGroups();
-          } else {
-            alert('Ungültige JSON-Struktur.');
-          }
-        } catch {
-          alert('Fehler beim Parsen der Datei.');
-       
+          if (Array.isArray
