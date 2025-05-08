@@ -1,264 +1,277 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dareloop Gruppen</title>
-
-  <!-- CSS-Styling für die Benutzeroberfläche -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness-App</title>
   <style>
+    /* Basis-Styles */
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8fafc;
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2f80ed;
       padding: 20px;
-      color: #1f2937;
+      color: white;
+      text-align: center;
     }
 
-    input[type="text"] {
-      padding: 8px;
-      border: 1px solid #d1d5db;
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    .main-container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .workout-card {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .workout-card h3 {
+      margin: 0;
+      font-size: 1.6em;
+      color: #333;
+    }
+
+    .workout-card button {
+      padding: 12px 20px;
+      background-color: #10b981;
+      border: none;
       border-radius: 6px;
-      margin-right: 8px;
-      width: 250px;
+      color: white;
+      cursor: pointer;
     }
 
-    button {
-      padding: 8px 12px;
-      background: #10b981;
+    .workout-card button:hover {
+      background-color: #059669;
+    }
+
+    .progress-bar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #e1e7f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      background-color: #2f80ed;
+      width: 0;
+      transition: width 1s;
+    }
+
+    .footer {
+      background-color: #2f80ed;
+      padding: 10px;
+      text-align: center;
+      color: white;
+      margin-top: 50px;
+    }
+
+    #auth-container {
+      text-align: center;
+      margin: 20px;
+    }
+
+    #auth-container input {
+      padding: 10px;
+      margin: 5px;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    #auth-container button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #10b981;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #059669;
-    }
-
-    .group {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .group > div strong {
-      font-size: 1.1em;
-    }
-
-    .challenge-form {
-      margin-top: 10px;
-    }
-
-    ul.challenges {
-      list-style: none;
-      padding-left: 0;
-      margin-top: 12px;
-    }
-
-    ul.challenges li {
-      padding: 8px 10px;
-      background: #f3f4f6;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: grab;
-    }
-
-    ul.challenges li:active {
-      cursor: grabbing;
-      background: #e5e7eb;
-    }
-
-    ul.challenges button {
-      margin-left: 6px;
-      padding: 5px 8px;
-      font-size: 0.9em;
-    }
-
-    #exportBtn, #importBtn {
-      background: #3b82f6;
-      margin-left: 6px;
-    }
-
-    #exportBtn:hover, #importBtn:hover {
-      background: #2563eb;
     }
   </style>
 </head>
 <body>
 
-  <!-- Eingabefeld für Gruppenname und Buttons für Aktionen -->
-  <input type="text" id="groupName" placeholder="Neue Gruppe erstellen" />
-  <button id="createGroupBtn">Gruppe erstellen</button>
-  <button id="exportBtn">Exportieren</button>
-  <input type="file" id="importFile" accept=".json" style="display:none;" />
-  <button id="importBtn">Importieren</button>
+<header>
+  <h1>Fitness-App</h1>
+  <p>Dein persönlicher Fitness-Coach</p>
+</header>
 
-  <!-- Liste der Gruppen -->
-  <ul id="groupList"></ul>
+<!-- Benutzeranmeldung -->
+<div id="auth-container">
+  <h2>Benutzer anmelden oder registrieren</h2>
+  <button id="sign-in-btn">Anmelden</button>
+  <button id="sign-up-btn">Registrieren</button>
+  <input type="email" id="email" placeholder="E-Mail">
+  <input type="password" id="password" placeholder="Passwort">
+</div>
 
-  <script>
-    const groupList = document.getElementById('groupList');
-    const createGroupBtn = document.getElementById('createGroupBtn');
-    const groupNameInput = document.getElementById('groupName');
-    const exportBtn = document.getElementById('exportBtn');
-    const importBtn = document.getElementById('importBtn');
-    const importFile = document.getElementById('importFile');
+<div class="main-container" style="display:none;">
+  <!-- Workout Cards -->
+  <div class="workout-card" id="workout-card-1" style="display:none;">
+    <div>
+      <h3>Yoga - Anfänger</h3>
+      <p>40 Minuten - 300 kcal</p>
+    </div>
+    <button onclick="startWorkout(1)">Starten</button>
+  </div>
 
-    let groups = JSON.parse(localStorage.getItem('dareloopGroups')) || [];
+  <div class="workout-card" id="workout-card-2" style="display:none;">
+    <div>
+      <h3>Krafttraining - Brust</h3>
+      <p>30 Minuten - 350 kcal</p>
+    </div>
+    <button onclick="startWorkout(2)">Starten</button>
+  </div>
 
-    function saveGroups() {
-      localStorage.setItem('dareloopGroups', JSON.stringify(groups));
+  <div class="workout-card" id="workout-card-3" style="display:none;">
+    <div>
+      <h3>Laufen - 5 km</h3>
+      <p>40 Minuten - 400 kcal</p>
+    </div>
+    <button onclick="startWorkout(3)">Starten</button>
+  </div>
+
+  <!-- Fortschrittsanzeige -->
+  <div class="progress-bar-container">
+    <h2>Fortschritt</h2>
+    <div class="progress-bar">
+      <span id="progress-bar"></span>
+    </div>
+    <p id="workout-status">Bereit für dein Workout!</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>&copy; 2025 Fitness-App | Alle Rechte vorbehalten</p>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+
+<script>
+// Firebase-Konfiguration (Daten hier ersetzen)
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-auth-domain",
+  projectId: "your-project-id",
+  storageBucket: "your-storage-bucket",
+  messagingSenderId: "your-sender-id",
+  appId: "your-app-id",
+  measurementId: "your-measurement-id"
+};
+
+// Firebase initialisieren
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// Anmeldung und Registrierung
+document.getElementById("sign-in-btn").addEventListener("click", signIn);
+document.getElementById("sign-up-btn").addEventListener("click", signUp);
+
+async function signIn() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    alert("Erfolgreich angemeldet!");
+    document.getElementById("auth-container").style.display = "none";
+    document.querySelector(".main-container").style.display = "block";
+    loadWorkouts();
+  } catch (error) {
+    alert("Fehler beim Anmelden: " + error.message);
+  }
+}
+
+async function signUp() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await auth.createUserWithEmailAndPassword(email, password);
+    alert("Erfolgreich registriert!");
+    document.getElementById("auth-container").style.display = "none";
+    document.querySelector(".main-container").style.display = "block";
+    loadWorkouts();
+  } catch (error) {
+    alert("Fehler bei der Registrierung: " + error.message);
+  }
+}
+
+// Workouts laden (nach Anmeldung)
+function loadWorkouts() {
+  document.getElementById("workout-card-1").style.display = "block";
+  document.getElementById("workout-card-2").style.display = "block";
+  document.getElementById("workout-card-3").style.display = "block";
+}
+
+// Workout starten
+function startWorkout(workoutId) {
+  let workoutName;
+  let workoutDuration;
+
+  switch(workoutId) {
+    case 1:
+      workoutName = "Yoga - Anfänger";
+      workoutDuration = 40;
+      break;
+    case 2:
+      workoutName = "Krafttraining - Brust";
+      workoutDuration = 30;
+      break;
+    case 3:
+      workoutName = "Laufen - 5 km";
+      workoutDuration = 40;
+      break;
+  }
+
+  document.getElementById('workout-status').innerText = `Du hast das ${workoutName} Workout gestartet!`;
+  simulateProgress(workoutDuration);
+}
+
+function simulateProgress(duration) {
+  const progressBar = document.getElementById('progress-bar');
+  let width = 0;
+  const interval = setInterval(() => {
+    if (width >= 100) {
+      clearInterval(interval);
+      document.getElementById('workout-status').innerText = "Workout abgeschlossen!";
+    } else {
+      width += 100 / duration;
+      progressBar.style.width = `${width}%`;
     }
-
-    function renderGroups() {
-      groupList.innerHTML = '';
-      groups.forEach((group, groupIndex) => {
-        const li = document.createElement('li');
-        li.className = 'group';
-
-        const groupHeader = document.createElement('div');
-        groupHeader.innerHTML = `<strong>Gruppe: ${group.name}</strong>`;
-        const deleteGroupBtn = document.createElement('button');
-        deleteGroupBtn.textContent = 'Gruppe löschen';
-        deleteGroupBtn.style.cssText = 'margin-left:10px; background:#ef4444; color:white; border:none; border-radius:4px; cursor:pointer;';
-        deleteGroupBtn.addEventListener('click', () => deleteGroup(groupIndex));
-        groupHeader.appendChild(deleteGroupBtn);
-
-        const challengeForm = document.createElement('div');
-        challengeForm.className = 'challenge-form';
-
-        const challengeInput = document.createElement('input');
-        challengeInput.type = 'text';
-        challengeInput.placeholder = 'Challenge hinzufügen';
-
-        const addBtn = document.createElement('button');
-        addBtn.textContent = '+';
-        addBtn.addEventListener('click', () => {
-          const challenge = challengeInput.value.trim();
-          if (challenge !== '') {
-            groups[groupIndex].challenges.push(challenge);
-            saveGroups();
-            renderGroups();
-          }
-        });
-
-        challengeForm.appendChild(challengeInput);
-        challengeForm.appendChild(addBtn);
-
-        const challengeList = document.createElement('ul');
-        challengeList.className = 'challenges';
-        challengeList.setAttribute('data-group-index', groupIndex);
-        challengeList.addEventListener('dragover', e => e.preventDefault());
-        challengeList.addEventListener('drop', handleDrop);
-
-        group.challenges.forEach((challenge, challengeIndex) => {
-          const item = document.createElement('li');
-          item.textContent = challenge;
-          item.setAttribute('draggable', 'true');
-          item.setAttribute('data-challenge-index', challengeIndex);
-          item.addEventListener('dragstart', handleDragStart);
-
-          const editBtn = document.createElement('button');
-          editBtn.textContent = '✎';
-          editBtn.style.cssText = 'margin-left:10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer;';
-          editBtn.addEventListener('click', () => editChallenge(groupIndex, challengeIndex));
-
-          const deleteBtn = document.createElement('button');
-          deleteBtn.textContent = 'X';
-          deleteBtn.style.cssText = 'margin-left:5px; background:#ef4444; color:white; border:none; border-radius:4px; cursor:pointer;';
-          deleteBtn.addEventListener('click', () => {
-            groups[groupIndex].challenges.splice(challengeIndex, 1);
-            saveGroups();
-            renderGroups();
-          });
-
-          item.appendChild(editBtn);
-          item.appendChild(deleteBtn);
-          challengeList.appendChild(item);
-        });
-
-        li.appendChild(groupHeader);
-        li.appendChild(challengeForm);
-        li.appendChild(challengeList);
-
-        groupList.appendChild(li);
-      });
-    }
-
-    function createGroup() {
-      const name = groupNameInput.value.trim();
-      if (name === '') return;
-      groups.push({ name, challenges: [] });
-      saveGroups();
-      renderGroups();
-      groupNameInput.value = '';
-    }
-
-    function deleteGroup(index) {
-      if (confirm('Diese Gruppe wirklich löschen?')) {
-        groups.splice(index, 1);
-        saveGroups();
-        renderGroups();
-      }
-    }
-
-    function editChallenge(groupIndex, challengeIndex) {
-      const newText = prompt('Challenge bearbeiten:', groups[groupIndex].challenges[challengeIndex]);
-      if (newText !== null) {
-        groups[groupIndex].challenges[challengeIndex] = newText.trim();
-        saveGroups();
-        renderGroups();
-      }
-    }
-
-    function handleDragStart(e) {
-      e.dataTransfer.setData('text/plain', e.target.getAttribute('data-challenge-index'));
-      e.dataTransfer.setData('group-index', e.target.parentElement.getAttribute('data-group-index'));
-    }
-
-    function handleDrop(e) {
-      const draggedIndex = +e.dataTransfer.getData('text/plain');
-      const groupIndex = +e.dataTransfer.getData('group-index');
-      const targetGroupIndex = +e.currentTarget.getAttribute('data-group-index');
-
-      if (groupIndex !== targetGroupIndex) return;
-
-      const challengeList = groups[groupIndex].challenges;
-      const movedItem = challengeList.splice(draggedIndex, 1)[0];
-
-      const dropPosition = [...e.currentTarget.children].indexOf(e.target.closest('li'));
-      challengeList.splice(dropPosition === -1 ? challengeList.length : dropPosition, 0, movedItem);
-
-      saveGroups();
-      renderGroups();
-    }
-
-    exportBtn.addEventListener('click', () => {
-      const dataStr = JSON.stringify(groups, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'dareloopGroups.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    importBtn.addEventListener('click', () => importFile.click());
-
-    importFile.addEventListener('change', () => {
-      const file = importFile.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (Array.isArray
+  }, 1000);
+}
+</script>
+</body>
+</html>
